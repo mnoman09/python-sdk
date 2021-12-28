@@ -11,13 +11,11 @@ on:
 
 jobs:
   build_lint:
-
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         python-version: ["2.7"]
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -32,8 +30,7 @@ jobs:
       run: |
         flake8
 
-  build_integration_testing:
-
+  build_unit_testing:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -52,3 +49,22 @@ jobs:
     - name: Test
       run: |
         pytest --cov=optimizely
+        
+  build_integration_testing:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - name: Extract branch name
+      shell: bash
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: extract_branch
+    - uses: actions/checkout@v2
+    - name: Integration tests
+      env:
+          SDK: python
+          SDK_BRANCH: ${{ steps.extract_branch.outputs.branch }}
+      run: |
+         mkdir $HOME/travisci-tools && pushd $HOME/travisci-tools && git init && git pull https://$CI_USER_TOKEN@github.com/optimizely/travisci-tools.git && popd
+         $HOME/travisci-tools/trigger-script-with-status-update.sh
+
