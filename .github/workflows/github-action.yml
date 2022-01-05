@@ -49,7 +49,18 @@ jobs:
     - name: Test
       run: |
         pytest --cov=optimizely
-        
+  build_csharp_sdk:
+    name: Dispatch to `other-repo`
+    runs-on: ubuntu-latest
+    steps:
+      - name: Emit repository_dispatch
+        uses: mvasigh/dispatch-action@main
+        with:
+          # You should create a personal access token and store it in your repository
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          repo: csharp-sdk
+          owner: mnoman09
+          event_type: sample_push      
   build_integration_testing:
     runs-on: ubuntu-latest
     strategy:
