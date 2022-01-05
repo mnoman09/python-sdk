@@ -50,7 +50,7 @@ jobs:
       run: |
         pytest --cov=optimizely
   build_csharp_sdk:
-    name: Dispatch to `other-repo`
+    name: Dispatch to `csharp-sdk`
     runs-on: ubuntu-latest
     steps:
       - name: Emit repository_dispatch
